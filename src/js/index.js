@@ -78,7 +78,7 @@ state.count = state.cautionArea.map(el => count(el));
 
 //for testing the state in the window level
 window.state = state;
-console.log(state);
+
 
 
 //this will create empObj object from the emptyArea class
@@ -126,10 +126,8 @@ indexView.renderBody(state.length, state.breath);
 
 //this below function will listen to click event in the game
 elements.game.addEventListener('click', e => {
-    if(state.AllIndex === []){
-        alert("you have won the game, awesome!!!");
-    }
-    else if (state.gameState) {
+
+    if (state.gameState) {
         //now the event (e) is passed to a function
         //storing the id of the target element at which the event was fire
         const id = e.target.id;
@@ -150,20 +148,39 @@ elements.game.addEventListener('click', e => {
         }
         //if id not found in the state.mine checking the state.cautionArea 
         else if (state.cautionArea.includes(id)) {
-            //if "yes", following the code below
-            let child = document.createElement("p");
-            let index = state.count[state.cautionArea.indexOf(id)];
-            child.textContent = index;
-            element.appendChild(child);
-            element.classList.add('buttonInactive');
-            removeIndex([id]);
+        
+            if (element.getElementsByTagName('p').length === 0) {                
+                //if "yes", following the code below
+                let child = document.createElement("p");
+                let index = state.count[state.cautionArea.indexOf(id)];
+                child.textContent = index;
+                element.appendChild(child);
+                element.classList.add('buttonInactive');
+                removeIndex([id]);
+            }
+
             //
             //
             //function to check if win 
         } else {
-           state.empTmp = empObj.allocateEmpty(id);
-           indexView.renderEmpty(state.empTmp);
-           removeIndex(state.empTmp);
+            state.empTmp = empObj.otherEmptyAllocate(id);
+            indexView.renderEmpty(state.empTmp);
+            removeIndex(state.empTmp);
+        }
+        if (state.AllIndex === []) {
+            alert("you have won the game, awesome!!!");
         }
     }
 });
+
+
+
+
+//testing for empty Area
+//
+// const testArr = ['0-0','3-4','3-2','1-3','2-3','2-2','2-1','3-1','3-0'];
+// const testEmp = new emptyArea(testArr, 4, 4);
+// console.log(testEmp.otherAllocate('1-1'));
+
+//
+//
