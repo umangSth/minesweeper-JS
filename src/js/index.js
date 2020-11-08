@@ -14,6 +14,10 @@ const state = {
     length: 10,
     breath: 5,
     gameState: true,
+    flag: {
+        state: false,
+        number: 10,
+    }
 };
 
 
@@ -124,51 +128,79 @@ indexView.renderBody(state.length, state.breath);
 //
 //  
 
-//this below function will listen to click event in the game
+//this below function will listen for the flag button
+elements.flag.addEventListener('click', e => {
+    if (state.flag.state === false) {
+        state.flag.state = true;
+        elements.flag.classList.toggle('flag-active');
+    } else {
+        state.flag.state = false;
+        elements.flag.classList.toggle("flag-active");
+    }
+});
+
+
+
+
+//this below function will listen to click event in the game button
 elements.game.addEventListener('click', e => {
 
     if (state.gameState) {
-        //now the event (e) is passed to a function
-        //storing the id of the target element at which the event was fire
-        const id = e.target.id;
         //selecting that element
+        const id = e.target.id;
         const element = document.getElementById(id);
-        //checking if the id is in state.mine 
-        if (state.mines.includes(id)) {
-            //if "yes", following the below code
-            let child = document.createElement("img");
-            child.src = "../img/hiclipart.com.png";
-            element.appendChild(child);
-            element.classList.add('buttonRed');
-            state.gameState = false;
-            alert("you Have lose");
-            //
-            //
-            //still need stuff to do
-        }
-        //if id not found in the state.mine checking the state.cautionArea 
-        else if (state.cautionArea.includes(id)) {
-        
-            if (element.getElementsByTagName('p').length === 0) {                
-                //if "yes", following the code below
-                let child = document.createElement("p");
-                let index = state.count[state.cautionArea.indexOf(id)];
-                child.textContent = index;
-                element.appendChild(child);
-                element.classList.add('buttonInactive');
-                removeIndex([id]);
+        if (state.flag.state === true) {
+            if (e.target.classList.contains('flag-active')) {
+                e.target.classList.remove('flag-active');
+                ++state.flag.number;
+            } else if (state.flag.number > 0) {
+                e.target.classList.add('flag-active');
+                --state.flag.number;
+            } else {
+                alert("you have finish all your flag!!");
             }
+        } else if (e.target.classList.contains('flag-active')) {
+            return;
+        } else
+        {
+            //now the event (e) is passed to a function
+            //storing the id of the target element at which the event was fire
 
-            //
-            //
-            //function to check if win 
-        } else {
-            state.empTmp = empObj.otherEmptyAllocate(id);
-            indexView.renderEmpty(state.empTmp);
-            removeIndex(state.empTmp);
-        }
-        if (state.AllIndex === []) {
-            alert("you have won the game, awesome!!!");
+            //checking if the id is in state.mine 
+            if (state.mines.includes(id)) {
+                //if "yes", following the below code
+                let child = document.createElement("img");
+                child.src = "../img/hiclipart.com.png";
+                element.appendChild(child);
+                element.classList.add('buttonRed');
+                state.gameState = false;
+                alert("you Have lose");
+                //
+                //
+                //still need stuff to do
+            }
+            //if id not found in the state.mine checking the state.cautionArea 
+            else if (state.cautionArea.includes(id)) {
+
+                if (element.getElementsByTagName('p').length === 0) {
+                    //if "yes", following the code below
+                    let child = document.createElement("p");
+                    let index = state.count[state.cautionArea.indexOf(id)];
+                    child.textContent = index;
+                    element.appendChild(child);
+                    element.classList.add('buttonInactive');
+                    removeIndex([id]);
+                }
+
+                //function to check if win 
+            } else {
+                state.empTmp = empObj.otherEmptyAllocate(id);
+                indexView.renderEmpty(state.empTmp);
+                removeIndex(state.empTmp);
+            }
+            if (state.AllIndex === []) {
+                alert("you have won the game, awesome!!!");
+            }
         }
     }
 });
@@ -177,10 +209,10 @@ elements.game.addEventListener('click', e => {
 
 
 //testing for empty Area
-//
-// const testArr = ['0-0','3-4','3-2','1-3','2-3','2-2','2-1','3-1','3-0'];
-// const testEmp = new emptyArea(testArr, 4, 4);
-// console.log(testEmp.otherAllocate('1-1'));
 
+// const testArr = ['0-0','0-2','2-2','3-0','3-1','3-2'];
+// const testEmp = new emptyArea(testArr, 4, 4);
+// console.log(testEmp.otherEmptyAllocate2('1-1'));
+// testEmp.otherEmptyAllocate2('1-1');
 //
 //

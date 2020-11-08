@@ -11,10 +11,7 @@
   border: 0.5px solid;
   box-shadow: 5px 5px 5px 5px #73abda;
 }
-.head {
-  height: 100px;
-  background-color: rgb(24, 141, 180);
-}
+
 
 .button {
   background-color: #e4e8f8; /* Green */
@@ -31,6 +28,33 @@
   border-radius: 5px;
   transition: all 0.6s; /*sets a transition (for hover effect)*/
 }
+.head {
+  height: 100px;
+  background-color: rgb(24, 141, 180);
+  
+}
+.flag{
+  background-color: #eff3f2;
+  border: none;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin:  auto;
+}
+
+.flag:hover{
+  background-color: #4ce6bf;
+}
+
+.flag-active{
+  background-color: #e8eb62;
+}
+
+
 .active {
   background-color: #df8787;
 }

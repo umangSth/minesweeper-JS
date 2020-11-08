@@ -26,27 +26,32 @@ export default class emptyArea {
 
 //2 version method to call type 2 algorithm to find the empty area
     otherEmptyAllocate(index) {
-        let arr = [index];
-        let i = this.length;
+       let arr = [index];
+       let tmp =arr;
+       
         do {
-            arr.map(el => allocateOtherEmpty(el, this.length, this.breath, this.CautionArea, arr)).forEach(e => {
-                if (!arr.includes(...e)) {
-                    arr.push(...e);
-                }
-            });
-            --i;
+            
+            tmp = allocateOtherEmpty(tmp, this.length, this.breath, this.CautionArea, arr);
+            tmp.forEach(el=>arr.push(el));
+                      
+         
         }
-        while (i > 0);
-        return arr;
+        while (tmp.length > 0);
+        
+        return arr ;
     }
 }
+
 
 
 //type 2 algorithm to find the empty area
 // other algorithm to find the empty area
 const allocateOtherEmpty = (index, length, breath, CautionArea, emp) => {
 
-    let a = index.split('');
+let indexArray=[];
+
+let tmpArr =index.map((el)=>{
+    let a = el.split('');
 
     let con = (aa) => parseInt(aa, 10);
     let ren = (i) => [con(a[i]) - 1, con(a[i]), con(a[i]) + 1];
@@ -58,7 +63,7 @@ const allocateOtherEmpty = (index, length, breath, CautionArea, emp) => {
 
     for (let j = 0; j < 3; ++j) {
         for (let k = 0; k < 3; ++k) {
-            if (b[j] > length || c[k] > breath || b[j] < 0 || c[k] < 0) {
+            if (b[j] >= length || c[k] >= breath || b[j] < 0 || c[k] < 0) {
                 continue;
             }
             let str = b[j] + "-" + c[k];
@@ -70,11 +75,18 @@ const allocateOtherEmpty = (index, length, breath, CautionArea, emp) => {
             } else {
                 arr.push(str);
             }
+        }}
+        return arr;
+    });
+    
+    tmpArr.forEach(e => {
+        if (!tmpArr.includes(...e)) {
+            indexArray.push(...e);
         }
-    }
-    return arr;
-}
+    });
 
+    return indexArray;
+}
 
 //type 1 algorithm to find the empty area
 const allocateEmpty = (index, flag, length, breath, CautionArea) => {
