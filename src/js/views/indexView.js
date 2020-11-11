@@ -4,7 +4,7 @@ import {
 
 //this function will load all the button with id [X-axis, Y-axis] format
 export const renderBody = (length, breath) => {
-
+    elements.game.innerHTML ="";
     let body = '';
     for (let i = 0; i < length; i++) {
         body += '<tr>';
@@ -18,6 +18,7 @@ export const renderBody = (length, breath) => {
     }
     elements.game.insertAdjacentHTML('afterbegin', body);
 }
+
 
 export const renderEmpty = (index) => {
     index.map(el => {

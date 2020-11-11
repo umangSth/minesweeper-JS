@@ -20,9 +20,6 @@ const state = {
     }
 };
 
-
-
-
 //some function
 //remove passed index array from state.allIndex[]
 const removeIndex = (indexes) => indexes.forEach(el => {
@@ -31,6 +28,20 @@ const removeIndex = (indexes) => indexes.forEach(el => {
         state.AllIndex.splice(index, 1);
     }
 });
+//this function will check the win 
+const checkWin = (index) => {
+
+    if (index.length === 0) {
+        alert("you have won the game, awesome!!!")
+        state.gameState = false;
+    }
+}
+
+const flagNum = (num) => {
+    elements.flag.innerHTML = '';
+    let flag = '<p>flag</p><p>' + num + '</p>';
+    elements.flag.insertAdjacentHTML('afterbegin', flag);
+}
 
 
 
@@ -44,54 +55,59 @@ const removeIndex = (indexes) => indexes.forEach(el => {
 //
 //
 //
-//constructing new obj of mines class
-const mine = new mines(state.length, state.breath);
-//call the calculate all index method of mines and saving result in state.AllIndex
-state.AllIndex = mine.calAllIndex();
+const calAllModel = () => {
+    //constructing new obj of mines class
+    const mine = new mines(state.length, state.breath);
+    //call the calculate all index method of mines and saving result in state.AllIndex
+    state.AllIndex = mine.calAllIndex();
 
 
-//this will call all the mines index and to be state in state.mines
-state.mines = mine.allocateMine(10);
-removeIndex(state.mines);
+    //this will call all the mines index and to be state in state.mines
+    state.mines = mine.allocateMine(10);
+    removeIndex(state.mines);
 
 
-//this will store all the caution area in state.allcautionarea, by calling mine.allovateCautionArea()
-state.allCautionArea = mine.allocateCautionArea();
+    //this will store all the caution area in state.allcautionarea, by calling mine.allovateCautionArea()
+    state.allCautionArea = mine.allocateCautionArea();
 
 
-//this efi function will cut out repeated item, and store state.cautionArea
-state.cautionArea = (function (array) {
-    let uniqueArray = [];
-    // Loop through array values
-    for (let value of array) {
-        if (uniqueArray.indexOf(value) === -1) {
-            uniqueArray.push(value);
+    //this efi function will cut out repeated item, and store state.cautionArea
+    state.cautionArea = (function (array) {
+        let uniqueArray = [];
+        // Loop through array values
+        for (let value of array) {
+            if (uniqueArray.indexOf(value) === -1) {
+                uniqueArray.push(value);
+            }
         }
-    }
-    return uniqueArray;
-})(state.allCautionArea);
+        return uniqueArray;
+    })(state.allCautionArea);
 
 
-//this function will count the item repeated in state.allCautionArea
-let count = (item) => state.allCautionArea.filter((el) => el === item).length;
+    //this function will count the item repeated in state.allCautionArea
+    let count = (item) => state.allCautionArea.filter((el) => el === item).length;
 
 
-//this function will store the repeat value in state.count
-state.count = state.cautionArea.map(el => count(el));
+    //this function will store the repeat value in state.count
+    state.count = state.cautionArea.map(el => count(el));
 
+    //this will reset the flag
+    flagNum(state.flag.number);
+};
+
+
+
+//---------------
+// calling the  model function start the game
+//--------------
+calAllModel();
 
 //for testing the state in the window level
 window.state = state;
 
 
-
 //this will create empObj object from the emptyArea class
 const empObj = new emptyArea(state.cautionArea, state.length, state.breath);
-
-
-
-
-
 
 //
 //
@@ -102,7 +118,6 @@ const empObj = new emptyArea(state.cautionArea, state.length, state.breath);
 //
 
 
-
 //
 //
 //View Section
@@ -111,7 +126,6 @@ const empObj = new emptyArea(state.cautionArea, state.length, state.breath);
 //
 
 indexView.renderBody(state.length, state.breath);
-
 
 //
 //
@@ -153,16 +167,17 @@ elements.game.addEventListener('click', e => {
             if (e.target.classList.contains('flag-active')) {
                 e.target.classList.remove('flag-active');
                 ++state.flag.number;
+                flagNum(state.flag.number);
             } else if (state.flag.number > 0) {
                 e.target.classList.add('flag-active');
                 --state.flag.number;
+                flagNum(state.flag.number);
             } else {
                 alert("you have finish all your flag!!");
             }
         } else if (e.target.classList.contains('flag-active')) {
             return;
-        } else
-        {
+        } else {
             //now the event (e) is passed to a function
             //storing the id of the target element at which the event was fire
 
@@ -190,6 +205,7 @@ elements.game.addEventListener('click', e => {
                     element.appendChild(child);
                     element.classList.add('buttonInactive');
                     removeIndex([id]);
+                    checkWin(state.AllIndex);
                 }
 
                 //function to check if win 
@@ -197,22 +213,39 @@ elements.game.addEventListener('click', e => {
                 state.empTmp = empObj.otherEmptyAllocate(id);
                 indexView.renderEmpty(state.empTmp);
                 removeIndex(state.empTmp);
-            }
-            if (state.AllIndex === []) {
-                alert("you have won the game, awesome!!!");
+                checkWin(state.AllIndex)
             }
         }
     }
 });
 
 
+//the restart bottom 
+elements.btn_restart.addEventListener('click', () => {
+    indexView.renderBody(state.length, state.breath);
+    state.gameState = true;
+    //this will reset the flag
+    flagNum(state.flag.number);
+})
+
+
+//the reset bottom
+elements.btn_reset.addEventListener('click', () => {
+    calAllModel();
+    indexView.renderBody(state.length, state.breath);
+    state.gameState = true;
+})
+
+
+
+
+
 
 
 //testing for empty Area
 
-// const testArr = ['0-0','0-2','2-2','3-0','3-1','3-2'];
-// const testEmp = new emptyArea(testArr, 4, 4);
-// console.log(testEmp.otherEmptyAllocate2('1-1'));
-// testEmp.otherEmptyAllocate2('1-1');
-//
-//
+// const testArr = ['4-0','4-1','4-2','3-2','3-3','2-3','2-4','2-5','2-6','2-7','2-8','2-9','6-0','6-1','6-2','6-3','6-4','5-4','5-5','4-5','4-6','5-6','7-6','7-7','7-8','6-8','6-9','5-9','4-9','4-8','7-4'];
+// const testEmp = new emptyArea(testArr, 8, 10);
+// console.log(testEmp.otherEmptyAllocate('5-3'));
+
+
